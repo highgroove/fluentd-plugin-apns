@@ -1,6 +1,3 @@
-# -*- encoding: utf-8 -*-
-require File.expand_path('../lib/fluentd-plugin-apns/version', __FILE__)
-
 Gem::Specification.new do |gem|
   gem.authors       = ["vanstee"]
   gem.email         = ["vanstee@highgroove.com"]
@@ -13,5 +10,10 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "fluentd-plugin-apns"
   gem.require_paths = ["lib"]
-  gem.version       = Fluentd::Plugin::Apns::VERSION
+  gem.version       = "0.0.1"
+
+  gem.add_dependency "fluentd", "~> 0.10.15"
+  gem.add_dependency "apnserver", "~> 0.2.2"
+
+  gem.add_development_dependency "rake"
 end
