@@ -20,6 +20,12 @@ class ApnsOutputTest < Test::Unit::TestCase
     Fluent::Test::BufferedOutputTestDriver.new(Fluent::ApnsOutput).configure(conf)
   end
 
+  def stub_apns
+    stub.tap do |apns|
+      ApnServer::Client.stubs(:new).returns(apns)
+    end
+  end
+
   def test_configure_options
     conf = '
       host     gateway.push.apple.com
@@ -48,5 +54,13 @@ class ApnsOutputTest < Test::Unit::TestCase
     assert_raise Fluent::ConfigError do
       create_driver(empty_configuration)
     end
+  end
+
+  def test_start_connects_to_apns
+    apns   = stub_apns
+    driver = create_driver(default_configuration)
+
+    apns.expects(:connect!)
+    driver.instance.start
   end
 end

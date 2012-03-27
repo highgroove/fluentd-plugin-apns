@@ -19,5 +19,11 @@ module Fluent
 
       @apns = ApnServer::Client.new(@pem, @host, @port, @password)
     end
+
+    def start
+      super
+
+      @apns.connect!
+    end
   end
 end
