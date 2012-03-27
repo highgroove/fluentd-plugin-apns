@@ -31,5 +31,21 @@ module Fluent
 
       @apns.disconnect!
     end
+
+    def format(tag, time, record)
+      [tag, time, record].to_msgpack
+    end
+
+    def write(chunk)
+      chunk.msgpack_each do |(tag, time, record)|
+        notification = ApnServer::Notification.new
+        notification.device_token = record['device_token']
+        notification.alert        = record['alert']
+        notification.badge        = record['badge']
+        notification.sound        = record['sound']
+
+        @apns.write(notification)
+      end
+    end
   end
 end

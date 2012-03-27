@@ -72,4 +72,24 @@ class ApnsOutputTest < Test::Unit::TestCase
     driver.instance.start # must be started before being shutdown
     driver.instance.shutdown
   end
+
+  def test_writes_to_apns
+    apns   = stub_apns
+    driver = create_driver(default_configuration)
+
+    apns.expects(:write).with { |notification|
+      notification.device_token == "abc123" &&
+      notification.alert        == "EXERCISE EXERCISE EXERCISE" &&
+      notification.badge        == 1 &&
+      notification.sound        == "siren.aiff"
+    }
+
+    driver.emit(
+      "device_token" => "abc123",
+      "alert"        => "EXERCISE EXERCISE EXERCISE",
+      "badge"        => 1,
+      "sound"        => "siren.aiff"
+    )
+    driver.run
+  end
 end
