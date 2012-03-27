@@ -19,5 +19,37 @@ module Fluent
 
       @apns = ApnServer::Client.new(@pem, @host, @port, @password)
     end
+
+    def start
+      super
+      @apns.connect!
+    end
+
+    def shutdown
+      super
+      @apns.disconnect!
+    end
+
+    def format(device_token, alert, badge, sound)
+      [device_token, alert, badge, sound].to_msgpack
+    end
+
+    def write(chunk)
+      chunk.open do |io|
+        begin
+          MessagePack::Unpackaer.new(io).each do |options|
+            Notification.new do |notification|
+              notfication.device_token = options['device_token']
+              notfication.alert        = options['alert']
+              notfication.badge        = options['badge']
+              notfication.sound        = options['sound']
+            end
+
+            @apns.write(notification)
+          end
+        rescue EOFError
+        end
+      end
+    end
   end
 end
