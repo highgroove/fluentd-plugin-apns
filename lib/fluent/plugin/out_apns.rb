@@ -25,5 +25,11 @@ module Fluent
 
       @apns.connect!
     end
+
+    def shutdown
+      super
+
+      @apns.disconnect!
+    end
   end
 end

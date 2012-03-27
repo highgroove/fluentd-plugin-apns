@@ -21,7 +21,7 @@ class ApnsOutputTest < Test::Unit::TestCase
   end
 
   def stub_apns
-    stub.tap do |apns|
+    stub_everything.tap do |apns|
       ApnServer::Client.stubs(:new).returns(apns)
     end
   end
@@ -62,5 +62,14 @@ class ApnsOutputTest < Test::Unit::TestCase
 
     apns.expects(:connect!)
     driver.instance.start
+  end
+
+  def test_shutdown_disconnects_from_apns
+    apns   = stub_apns
+    driver = create_driver(default_configuration)
+
+    apns.expects(:disconnect!)
+    driver.instance.start # must be started before being shutdown
+    driver.instance.shutdown
   end
 end
